@@ -4,7 +4,7 @@ import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import { v4 as uuidv4 } from 'uuid';
-import { router } from './routes/index';
+import { router } from './routes/games';
 
 const app = express();
 
@@ -15,13 +15,12 @@ app.use(
     genid: (req) => uuidv4(),
     secret: 'yes',
     resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
+    saveUninitialized: false
   })
 );
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use('/', router);
+app.use('/api/v1/games', router);
 app.use(function (req, res, next) {
   // catch 404 and forward to error handler
   next(createError(404));
