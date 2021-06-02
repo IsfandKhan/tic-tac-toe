@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Component({
   selector: "app-root",
@@ -8,10 +8,4 @@ import { Router } from "@angular/router";
 })
 export class AppComponent {
   title = "tic-tac-toe-frontend";
-
-  constructor(private router: Router) {}
-
-  start() {
-    this.router.navigateByUrl('/12');
-  }
 }
