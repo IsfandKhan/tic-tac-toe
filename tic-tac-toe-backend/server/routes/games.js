@@ -2,76 +2,86 @@ import express from 'express';
 import { body, validationResult } from 'express-validator';
 
 import { GamesModel } from '../models/games';
-import { sendResponse } from '../utils/response';
+import { isUUID, sendResponse, response400, response404 } from '../utils/utility-functions';
+import { replaceAt } from '../utils/utility-functions';
 
 const router = express.Router();
 const gameModel = GamesModel();
 
-router.get('/', (_req, res) => sendResponse(res, gameModel.getAll()));
+router.get('/', (_req, res) => sendResponse(res, 200, gameModel.getAll()));
 
 router.post('/', body('board').isString(), (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({message: 'Bad Request', errors: errors.array() });
+    return response400(res, 'board has ' + errors.array()[0].msg);
   }
 
   const { board } = req.body;
   const game = gameModel.create(board);
 
-  return sendResponse(res, {
-    location: `/${game.id}`
-  });
+  return sendResponse(res, 201, { location: `/${game.id}` });
 });
 
 router.get('/:id', (req, res) => {
   const id = req.params.id;
+  
+  if (!isUUID(id)) {
+    return response400(res, 'Not a valid id');
+  }
+
   const game = gameModel.getOne(id);
 
   if (!game) {
     return res.status(404).json({
-      errors: [
-        {
-          message: 'Resource not found'
-        }
-      ]
+      reason: 'Resource Not Found'
     });
   }
 
-  return sendResponse(res, game);
+  return sendResponse(res, 200, game);
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id',body('board').isString(), (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return response400(res, 'board has ' + errors.array()[0].msg);
+  }
+  
   const id = req.params.id;
-  const { board } = req.body;
+  let { board, index } = req.body;
+
+  if (!isUUID(id)) {
+    return response400(res, 'Not a valid id');
+  }
+
+  if (board[index] !== '-') {
+    return response400(res, 'Not a valid move');
+  }
+
+  board = replaceAt(board, index, 'X');
+
   const game = gameModel.updateOne(id, board);
 
   if (!game) {
-    return res.status(404).json({
-      errors: [
-        {
-          message: 'Resource not found'
-        }
-      ]
-    });
+    return response404(res);
   }
 
-  return sendResponse(res, game, 'Move successfully registered');
+  return sendResponse(res, 200, game);
 });
 
 router.delete('/:id', (req, res) => {
   const id = req.params.id;
   const game = gameModel.getOne(id);
 
-  if (!game) {
-    return res.status(404).json({
-      errors: [
-        {
-          message: 'Resource not found'
-        }
-      ]
-    });
+  if (!isUUID(id)) {
+    return response400(res, 'Not a valid id');
   }
-  sendResponse(res, { message: 'Game successfully deleted'});
+
+  if (!game) {
+    return response404(res);
+  }
+
+  gameModel.deleteOne(id);
+  sendResponse(res, 200, { message: 'Game successfully deleted' });
 });
 
 export { router };

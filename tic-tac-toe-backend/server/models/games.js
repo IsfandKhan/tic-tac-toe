@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { placeMove } from '../utils/tictactoe-ai';
+import { checkStatus, placeMove } from '../utils/tictactoe-ai';
 
 const STATUS = Object.freeze({
   running: 'RUNNING',
@@ -13,7 +13,10 @@ export const GamesModel = () => {
   return {
     getAll: () => games,
     getOne: (id) => games.find((game) => game.id === id) || null,
-    deleteOne: (id) => (games = games.filter(game.id !== id)),
+    deleteOne: (id) => {
+      const index = games.findIndex((game) => game.id === id);
+      games.splice(index, 1);
+    },
     create: (board) => {
       const game = {
         id: v4(),
@@ -30,8 +33,22 @@ export const GamesModel = () => {
         return null;
       }
 
-      game.board = board;
-      game.board = placeMove(game.board);
+      game.board = placeMove(board);
+      const status = checkStatus(game.board);
+      switch (status.status) {
+        case 'win':
+          game.status = STATUS.x_won;
+          break;
+        case 'loss':
+          game.status = STATUS.o_won;
+          break;
+        case 'tie':
+          game.status = STATUS.draw;
+          break;
+        case 'none':
+          game.status = STATUS.running;
+          break;
+      }
       return game;
     }
   };

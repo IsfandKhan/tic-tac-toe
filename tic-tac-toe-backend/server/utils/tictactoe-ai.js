@@ -1,15 +1,9 @@
 const tictactoe = require('tictactoe-minimax-ai');
+import { replaceAt } from './utility-functions';
 
 const options = {
   computer: 'o',
   opponent: 'x'
-};
-
-const replaceAt = (str, index, replacement) => {
-  if (index >= str.length) {
-    return str.valueOf();
-  }
-  return str.substring(0, index) + replacement + str.substring(index + 1);
 };
 
 const convertStringToArray = (board = '') => {
@@ -43,4 +37,9 @@ export const placeMove = (board = '') => {
   const index = tictactoe.bestMove(newBoard, options);
   const stringBoard = convertArraytoString(newBoard);
   return replaceAt(stringBoard, index, options.computer.toUpperCase());
+};
+
+export const checkStatus = (board) => {
+  const newBoard = convertStringToArray(board);
+  return tictactoe.boardEvaluate(newBoard);
 };
