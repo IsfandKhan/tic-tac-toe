@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
   selector: 'app-block',
@@ -6,12 +6,15 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./block.component.scss']
 })
 export class BlockComponent implements OnInit {
-  mark='';
   @Input() data;
-  
+  @Output() onClick = new EventEmitter<void>();
+
   constructor() { }
 
   ngOnInit() {
   }
 
+  blockClicked() {
+    this.onClick.emit();
+  }
 }

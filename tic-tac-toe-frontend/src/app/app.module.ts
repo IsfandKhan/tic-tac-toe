@@ -1,13 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BlockComponent } from './block/block.component';
-import { BoardComponent } from './board/board.component';
-import { GameComponent } from './game/game.component';
-import { HomeComponent } from './home/home.component';
-
+import { BlockComponent, BoardComponent } from './components';
+import { GameComponent, HomeComponent } from './pages';
+import { ApiService } from './services';
 @NgModule({
   declarations: [
     AppComponent,
@@ -16,11 +16,8 @@ import { HomeComponent } from './home/home.component';
     GameComponent,
     HomeComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, ToastrModule],
+  providers: [ApiService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}
