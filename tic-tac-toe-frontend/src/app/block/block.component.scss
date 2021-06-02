@@ -15,6 +15,10 @@
   background: #0ff30f;
 }
 
+.occupied:hover {
+  background: #ff3a3a;
+}
+
 #block_0,
 #block_1,
 #block_2 {
@@ -38,4 +42,3 @@
 #block_8 {
   border-right: none;
 }
-
