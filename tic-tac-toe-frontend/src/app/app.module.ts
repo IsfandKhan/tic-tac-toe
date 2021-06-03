@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { BlockComponent, BoardComponent } from './components';
 import { GameComponent, HomeComponent } from './pages';
 import { ApiService } from './services';
+import { NotifierModule } from 'angular-notifier';
 @NgModule({
   declarations: [
     AppComponent,
@@ -15,7 +16,7 @@ import { ApiService } from './services';
     GameComponent,
     HomeComponent
   ],
-  imports: [BrowserModule, AppRoutingModule, HttpClientModule],
+  imports: [BrowserModule, AppRoutingModule, HttpClientModule, NotifierModule],
   providers: [ApiService],
   bootstrap: [AppComponent]
 })

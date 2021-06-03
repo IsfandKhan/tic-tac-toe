@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { replaceAt } from '../../utils';
+import { NotifierService } from 'angular-notifier';
 import { ApiService } from '../../services';
-
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
@@ -16,7 +15,8 @@ export class GameComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private apiService: ApiService
+    private apiService: ApiService,
+    private notifier: NotifierService
   ) {}
 
   ngOnInit() {
@@ -52,12 +52,17 @@ export class GameComponent implements OnInit {
         this.boardId = res.id;
         this.board = res.board;
         this.checkGameStatus(res);
-      });
+      }, err=> {});
   }
 
   deleteGame() {
     this.apiService.deleteGame(this.boardId).subscribe((res: any) => {
       this.router.navigateByUrl('/');
+    }, err => {
+      this.notifier.show({
+        type: 'success',
+        'Game Deleted Successfully'
+      });
     });
   }
 }
