@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NotifierService } from 'angular-notifier';
+import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../services';
 @Component({
   selector: 'app-game',
@@ -16,7 +16,7 @@ export class GameComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private apiService: ApiService,
-    private notifier: NotifierService
+    private notifier: ToastrService
   ) {}
 
   ngOnInit() {
@@ -26,7 +26,10 @@ export class GameComponent implements OnInit {
         this.boardId = res.id;
         this.board = res.board;
         this.checkGameStatus(res);
-      });
+      }),
+        (err) => {
+          this.notifier.error(err.error.reason);
+        };
     });
   }
 
@@ -45,24 +48,28 @@ export class GameComponent implements OnInit {
   }
 
   updateBoard(index) {
-    this.apiService
-      .placeMark(this.boardId, this.board, index)
-      .subscribe((res: any) => {
+    this.apiService.placeMark(this.boardId, this.board, index).subscribe(
+      (res: any) => {
         console.log(res);
         this.boardId = res.id;
         this.board = res.board;
         this.checkGameStatus(res);
-      }, err=> {});
+      },
+      (err) => {
+        this.notifier.error(err.error.reason);
+      }
+    );
   }
 
   deleteGame() {
-    this.apiService.deleteGame(this.boardId).subscribe((res: any) => {
-      this.router.navigateByUrl('/');
-    }, err => {
-      this.notifier.show({
-        type: 'success',
-        'Game Deleted Successfully'
-      });
-    });
+    this.apiService.deleteGame(this.boardId).subscribe(
+      () => {
+        this.router.navigateByUrl('/');
+        this.notifier.success('Game Deleted Successfully');
+      },
+      (err) => {
+        this.notifier.error(err.error.reason);
+      }
+    );
   }
 }
