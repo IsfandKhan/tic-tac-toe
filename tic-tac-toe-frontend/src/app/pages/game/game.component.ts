@@ -8,9 +8,9 @@ import { ApiService } from '../../services';
   styleUrls: ['./game.component.scss']
 })
 export class GameComponent implements OnInit {
-  public board;
   private boardId;
-  message = '';
+  public board;
+  public message = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -37,12 +37,15 @@ export class GameComponent implements OnInit {
     switch (data.status) {
       case 'X_WON':
         this.message = 'You Won';
+        this.notifier.success(this.message)
         break;
       case 'O_WON':
         this.message = 'Computer Won';
+        this.notifier.warning(this.message);
         break;
       case 'DRAW':
         this.message = 'Game Drawn';
+        this.notifier.info(this.message)
         break;
     }
   }
